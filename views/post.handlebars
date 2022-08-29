@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="card">
+        <h2>{{post.title}}</h2>
+        <p>{{post.content}}</p>
+        <h4>{{post.user.username}}</h4>
+        <h5>{{post.created_at}}</h5>
+    </div>
+    {{#if loggedIn}}
+    <div class="col-md-12">
+        <form class="form comment-form">
+            <h3>Comment</h3>
+            <div class="form-group">
+                <label for="comment">comment:</label>
+                <input class="form-input" type="text" id="comment" />
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">comment</button>
+            </div>
+        </form>
+    </div>
+    {{/if}}
+    <div class="card">
+        {{#each post.comments as |comment|}}
+            {{> comment}}
+        {{/each}}
+    </div>
+</div>
+
+<p class="invisible" id="post">{{post.id}}</p>
+
+<script src="/js/comment.js"></script>

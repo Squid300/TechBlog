@@ -1,9 +1,8 @@
 const router = require('express').Router();
-const { User, Post, Comment } = require('../../models');
+const { User, Post } = require('../../models');
 
 router.post( '/login', async ( req, res ) => {
     try {
-        const response = req;
         const userData = await User.findOne({ where: { email: req.body.email }});
 
         if(!userData){
@@ -24,6 +23,16 @@ router.post( '/login', async ( req, res ) => {
         });
     }catch (err) {
         res.status(500).json(err);
+    }
+});
+
+router.post('/logout', ( req, res ) => {
+    if ( req.session.loggedIn) {
+        req.session.destroy(() => {
+            res.status(200).end();
+        });
+    }else {
+        res.status(404).end();
     }
 });
 
@@ -51,12 +60,13 @@ router.get('/profile', async ( req, res ) => {
             ]
         });
         const postData = await Post.findAll({ where: { user_id: req.session.user_id }});
-        const commentData = await Comment.findAll({ where: { user_id: req.session.user_id }});
+
+        const posts = postData.map((post) => post.get({ plain: true }));
+        const user = userData.get({ plain: true });
 
         res.render('profile', {
-            userData,
-            postData,
-            commentData,
+            user,
+            posts,
             loggedIn: req.session.loggedIn,
         });
     }catch (err) {
